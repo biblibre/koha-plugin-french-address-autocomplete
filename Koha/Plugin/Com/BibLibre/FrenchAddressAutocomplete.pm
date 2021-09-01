@@ -6,7 +6,7 @@ use utf8;
 use base qw(Koha::Plugins::Base);
 
 our $VERSION = '1.2';
-our $APISRV='https://api-adresse.data.gouv.fr/search/';
+our $APISRV='https://api-adresse.data.gouv.fr/search/?autocomplete=1&limit=15';
 our $MAINADDRPREFIX='';
 our @MAINADDRFIELDS=qw( address address2 city zipcode );
 our $ALTADDRPREFIX='B_';
@@ -164,7 +164,7 @@ sub _js_for_field {
 \$("input#"+"$prefix"+"$field").autocomplete({
     source: function (request, response) {
         \$.ajax({
-            url: "$APISRV?autocomplete=1&type=municipality&q="+request.term,
+            url: "$APISRV&type=municipality&q="+request.term,
             dataType: "json",
             success: function (data) {
                 var postcodes = [];
@@ -194,7 +194,7 @@ sub _js_for_field {
 \$("input#"+"$prefix"+"$field").autocomplete({
     source: function (request, response) {
         \$.ajax({
-            url: "$APISRV?autocomplete=1&type=municipality&q="+request.term,
+            url: "$APISRV&type=municipality&q="+request.term,
             dataType: "json",
             success: function (data) {
                 var cities = [];
@@ -222,7 +222,7 @@ sub _js_for_field {
 \$("input#"+"$prefix"+"$field").autocomplete({
     source: function (request, response) {
         \$.ajax({
-            url: "$APISRV?autocomplete=1&q="+request.term+"&postcode="+\$("input#"+"$prefix"+"zipcode").val(),
+            url: "$APISRV&q="+request.term+"&postcode="+\$("input#"+"$prefix"+"zipcode").val(),
             dataType: "json",
             success: function (data) {
                 response(\$.map(data.features, function (item) {
