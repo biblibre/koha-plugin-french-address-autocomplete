@@ -5,7 +5,7 @@ use utf8;
 
 use base qw(Koha::Plugins::Base);
 
-our $VERSION = '1.1';
+our $VERSION = '1.2';
 our $APISRV='https://api-adresse.data.gouv.fr/search/';
 our $MAINADDRPREFIX='';
 our @MAINADDRFIELDS=qw( address address2 city zipcode );

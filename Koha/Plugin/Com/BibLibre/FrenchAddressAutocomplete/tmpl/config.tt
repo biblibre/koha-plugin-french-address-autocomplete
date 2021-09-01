@@ -14,8 +14,8 @@
 [% INCLUDE 'cat-search.inc' %]
 
 <div id="breadcrumbs">
-    <a href="/cgi-bin/koha/mainpage.pl">Home</a>
-    &rsaquo; <a href="/cgi-bin/koha/tools/tools-home.pl">Tools</a>
+    <a href="/cgi-bin/koha/mainpage.pl">Acceuil</a>
+    &rsaquo; <a href="/cgi-bin/koha/tools/tools-home.pl">Outils</a>
     &rsaquo; <a href="/cgi-bin/koha/plugins/run.pl?class=[% CLASS | uri %]&amp;method=[% METHOD | uri %]">French Address Autocomplete configuration</a>
 </div>
 
@@ -26,7 +26,7 @@
             <input type="hidden" name="class" value="[% CLASS | html %]" />
             <input type="hidden" name="method" value="[% METHOD | html %]" />
             <fieldset class="rows">
-                <legend>Enable autocomplete for main address fields:</legend>
+                <legend>Activer l'autocomplétion pour les champs de l'adresse principale :</legend>
                 <ol>
                 [% FOREACH mainaddrfield IN mainaddrfields %]
                     [% SET f = "$mainaddrprefix$mainaddrfield" %]
@@ -43,7 +43,7 @@
                 </ol>
             </fieldset>
             <fieldset class="rows">
-                <legend>Enable autocomplete for alternate address fields:</legend>
+                <legend>Activer l'autocomplétion pour les champs de l'autre adresse :</legend>
                 <ol>
                 [% FOREACH altaddrfield IN altaddrfields %]
                     [% SET f = "$altaddrprefix$altaddrfield" %]
@@ -60,7 +60,7 @@
                 </ol>
             </fieldset>
             <fieldset class="rows">
-                <legend>Enable autocomplete for alternate contact fields:</legend>
+                <legend>Activer l'autocomplétion pour les champs de l'adresse autre contact :</legend>
                 <ol>
                 [% FOREACH altcontfield IN altcontfields %]
                     [% SET f = "$altcontprefix$altcontfield" %]
