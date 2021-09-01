@@ -5,15 +5,21 @@ use utf8;
 
 use base qw(Koha::Plugins::Base);
 
-our $VERSION = '1.0';
+our $VERSION = '1.1';
 our $APISRV='https://api-adresse.data.gouv.fr/search/';
+our $MAINADDRPREFIX='';
+our @MAINADDRFIELDS=qw( address address2 city zipcode );
+our $ALTADDRPREFIX='B_';
+our @ALTADDRFIELDS=qw( address address2 city zipcode );
+our $ALTCONTPREFIX='altcontact';
+our @ALTCONTFIELDS=qw( address1 address2 city zipcode );
 
 our $metadata = {
     name   => 'French Address Autocomplete',
     author => 'BibLibre',
     description => 'Help address/city/zipcode typing via french opendata API',
     date_authored   => '2021-08-16',
-    date_updated    => '2021-08-16',
+    date_updated    => '2021-09-01',
     minimum_version => '19.11',
     maximum_version => undef,
     version         => $VERSION,
@@ -33,7 +39,14 @@ sub new {
 # Mandatory even if does nothing
 sub install {
     my ( $self, $args ) = @_;
- 
+
+    # Enable for main address
+    foreach (@MAINADDRFIELDS) {
+        next if $_ eq 'address2';
+        my $enable_main_f = 'enable_'.$MAINADDRPREFIX.$_;
+        $self->store_data({ $enable_main_f => 1 });
+    }
+
     return 1;
 }
  
@@ -51,6 +64,59 @@ sub uninstall {
     return 1;
 }
 
+# Options page.
+sub configure {
+    my ( $self, $args ) = @_;
+
+    my $template = $self->get_template({ file => 'tmpl/config.tt' });
+    my $query = $self->{'cgi'};
+    my $op = $query->param('op') || '';
+
+    if ($op eq 'save') {
+        foreach (@MAINADDRFIELDS) {
+            my $enable_main_f = 'enable_'.$MAINADDRPREFIX.$_;
+            my $value_main_f = $query->param($enable_main_f);
+            $self->store_data({ $enable_main_f => $value_main_f });
+        }
+        foreach (@ALTADDRFIELDS) {
+            my $enable_altaddr_f = 'enable_'.$ALTADDRPREFIX.$_;
+            my $value_altaddr_f = $query->param($enable_altaddr_f);
+            $self->store_data({ $enable_altaddr_f => $value_altaddr_f });
+        }
+        foreach (@ALTCONTFIELDS) {
+            my $enable_altcont_f = 'enable_'.$ALTCONTPREFIX.$_;
+            my $value_altcont_f = $query->param($enable_altcont_f);
+            $self->store_data({ $enable_altcont_f => $value_altcont_f });
+        }
+    }
+
+    foreach (@MAINADDRFIELDS) {
+        my $enable_main_f = 'enable_'.$MAINADDRPREFIX.$_;
+        my $value_main_f = $self->retrieve_data($enable_main_f);
+        $template->param( $enable_main_f => $value_main_f );
+    }
+    foreach (@ALTADDRFIELDS) {
+        my $enable_altaddr_f = 'enable_'.$ALTADDRPREFIX.$_;
+        my $value_altaddr_f = $self->retrieve_data($enable_altaddr_f);
+        $template->param( $enable_altaddr_f => $value_altaddr_f );
+    }
+    foreach (@ALTCONTFIELDS) {
+        my $enable_altcont_f = 'enable_'.$ALTCONTPREFIX.$_;
+        my $value_altcont_f = $self->retrieve_data($enable_altcont_f);
+        $template->param( $enable_altcont_f => $value_altcont_f );
+    }
+    $template->param(
+        mainaddrprefix => $MAINADDRPREFIX,
+        mainaddrfields => \@MAINADDRFIELDS,
+        altaddrprefix => $ALTADDRPREFIX,
+        altaddrfields => \@ALTADDRFIELDS,
+        altcontprefix => $ALTCONTPREFIX,
+        altcontfields => \@ALTCONTFIELDS,
+    );
+
+    return $self->output_html( $template->output() );
+}
+
 sub intranet_js {
     my ( $self ) = @_;
 
@@ -61,18 +127,24 @@ sub intranet_js {
  */
 |;
 
-    # Main address
-    $ret .= _js_for_field('', 'zipcode');
-    $ret .= _js_for_field('', 'city');
-    $ret .= _js_for_field('', 'address');
-    # Alternate address
-    $ret .= _js_for_field('B_', 'zipcode');
-    $ret .= _js_for_field('B_', 'city');
-    $ret .= _js_for_field('B_', 'address');
-    # Alternate contact
-    $ret .= _js_for_field('altcontact', 'zipcode');
-    $ret .= _js_for_field('altcontact', 'city');
-    $ret .= _js_for_field('altcontact', 'address1');
+    foreach (@MAINADDRFIELDS) {
+        my $enable_main_f = 'enable_'.$MAINADDRPREFIX.$_;
+        if ( $self->retrieve_data($enable_main_f) ){
+            $ret .= _js_for_field($MAINADDRPREFIX, $_);
+        }
+    }
+    foreach (@ALTADDRFIELDS) {
+        my $enable_altaddr_f = 'enable_'.$ALTADDRPREFIX.$_;
+        if ( $self->retrieve_data($enable_altaddr_f) ){
+            $ret .= _js_for_field($ALTADDRPREFIX, $_);
+        }
+    }
+    foreach (@ALTCONTFIELDS) {
+        my $enable_altcont_f = 'enable_'.$ALTCONTPREFIX.$_;
+        if ( $self->retrieve_data($enable_altcont_f) ){
+            $ret .= _js_for_field($ALTCONTPREFIX, $_);
+        }
+    }
 
     $ret .= q|
 </script>
