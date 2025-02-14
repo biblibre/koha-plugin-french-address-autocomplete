@@ -5,7 +5,7 @@ use utf8;
 
 use base qw(Koha::Plugins::Base);
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 our $APISRV='https://api-adresse.data.gouv.fr/search/?autocomplete=1&limit=15';
 our $MAINADDRPREFIX='';
 our @MAINADDRFIELDS=qw( address address2 city zipcode );
@@ -19,7 +19,7 @@ our $metadata = {
     author => 'BibLibre',
     description => 'Help address/city/zipcode typing via french opendata API',
     date_authored   => '2021-08-16',
-    date_updated    => '2021-09-01',
+    date_updated    => '2025-02-14',
     minimum_version => '19.11',
     maximum_version => undef,
     version         => $VERSION,
@@ -162,6 +162,7 @@ sub _js_for_field {
     if ( $field eq 'zipcode' ) {
         $js .= qq|
 \$("input#"+"$prefix"+"$field").autocomplete({
+    minLength: 3,
     source: function (request, response) {
         \$.ajax({
             url: "$APISRV&type=municipality&q="+request.term,
@@ -192,6 +193,7 @@ sub _js_for_field {
     } elsif ( $field eq 'city' ) {
         $js .= qq|
 \$("input#"+"$prefix"+"$field").autocomplete({
+    minLength: 3,
     source: function (request, response) {
         \$.ajax({
             url: "$APISRV&type=municipality&q="+request.term,
@@ -220,6 +222,7 @@ sub _js_for_field {
     } elsif ( $field =~ 'address' ) {
         $js .= qq|
 \$("input#"+"$prefix"+"$field").autocomplete({
+    minLength: 3,
     source: function (request, response) {
         \$.ajax({
             url: "$APISRV&q="+request.term+"&postcode="+\$("input#"+"$prefix"+"zipcode").val(),
