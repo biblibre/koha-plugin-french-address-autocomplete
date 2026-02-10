@@ -5,7 +5,7 @@ use utf8;
 
 use base qw(Koha::Plugins::Base);
 
-our $VERSION = '1.3';
+our $VERSION = '2.0';
 our $APISRV='https://api-adresse.data.gouv.fr/search/?autocomplete=1&limit=15';
 our $MAINADDRPREFIX='';
 our @MAINADDRFIELDS=qw( address address2 city zipcode );
@@ -19,8 +19,8 @@ our $metadata = {
     author => 'BibLibre',
     description => 'Help address/city/zipcode typing via french opendata API',
     date_authored   => '2021-08-16',
-    date_updated    => '2025-02-14',
-    minimum_version => '19.11',
+    date_updated    => '2026-02-10',
+    minimum_version => '24.05',
     maximum_version => undef,
     version         => $VERSION,
 };
