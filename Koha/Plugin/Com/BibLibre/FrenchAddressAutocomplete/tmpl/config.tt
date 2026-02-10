@@ -21,8 +21,9 @@
 
 <div class="main container-fluid">
     <div class="row">
-        <form action="/cgi-bin/koha/plugins/run.pl" method="POST">
-            <input type="hidden" name="op" value="save" />
+        <form action="/cgi-bin/koha/plugins/run.pl" method="post">
+            [% INCLUDE 'csrf-token.inc' %]
+            <input type="hidden" name="op" value="cud-save" />
             <input type="hidden" name="class" value="[% CLASS | html %]" />
             <input type="hidden" name="method" value="[% METHOD | html %]" />
             <fieldset class="rows">

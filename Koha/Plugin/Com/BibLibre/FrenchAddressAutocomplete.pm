@@ -72,7 +72,7 @@ sub configure {
     my $query = $self->{'cgi'};
     my $op = $query->param('op') || '';
 
-    if ($op eq 'save') {
+    if ($op eq 'cud-save') {
         foreach (@MAINADDRFIELDS) {
             my $enable_main_f = 'enable_'.$MAINADDRPREFIX.$_;
             my $value_main_f = $query->param($enable_main_f);
